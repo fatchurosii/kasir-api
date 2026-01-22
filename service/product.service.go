@@ -6,28 +6,28 @@ import (
 	"kasir-api/entity"
 )
 
-var ErrNotFound = errors.New("product not found")
+var ProductNotFound = errors.New("product not found")
 
-func GetByID(id int) (entity.Product, error) {
+func GetProductByID(id int) (entity.Product, error) {
 	for _, product := range data.Products {
 		if product.ID == id {
 			return product, nil
 		}
 	}
-	return entity.Product{}, ErrNotFound
+	return entity.Product{}, ProductNotFound
 }
 
-func GetAll() []entity.Product {
+func GetAllProduct() []entity.Product {
 	return data.Products
 }
 
-func Create(product entity.Product) entity.Product {
+func CreateProduct(product entity.Product) entity.Product {
 	product.ID = len(data.Products) + 1
 	data.Products = append(data.Products, product)
 	return product
 }
 
-func Update(id int, product entity.Product) (entity.Product, error) {
+func UpdateProduct(id int, product entity.Product) (entity.Product, error) {
 	for i, p := range data.Products {
 		if p.ID == id {
 			product.ID = id
@@ -35,10 +35,10 @@ func Update(id int, product entity.Product) (entity.Product, error) {
 			return product, nil
 		}
 	}
-	return entity.Product{}, ErrNotFound
+	return entity.Product{}, ProductNotFound
 }
 
-func Delete(id int) (entity.Product, error) {
+func DeleteProduct(id int) (entity.Product, error) {
 	for i, product := range data.Products {
 		if product.ID == id {
 			data.Products = append(
@@ -48,5 +48,5 @@ func Delete(id int) (entity.Product, error) {
 			return product, nil
 		}
 	}
-	return entity.Product{}, ErrNotFound
+	return entity.Product{}, ProductNotFound
 }

@@ -14,7 +14,7 @@ func GetProductById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product, err := service.GetByID(id)
+	product, err := service.GetProductByID(id)
 	if err != nil {
 		Error(w, http.StatusNotFound, "Product not found", nil)
 		return
@@ -24,7 +24,7 @@ func GetProductById(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllProducts(w http.ResponseWriter, r *http.Request) {
-	Success(w, http.StatusOK, "All products", service.GetAll())
+	Success(w, http.StatusOK, "All products", service.GetAllProduct())
 }
 
 func StoreProduct(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +34,7 @@ func StoreProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := service.Create(product)
+	result := service.CreateProduct(product)
 	Success(w, http.StatusCreated, "Product created", result)
 }
 
@@ -51,7 +51,7 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := service.Update(id, product)
+	result, err := service.UpdateProduct(id, product)
 	if err != nil {
 		Error(w, http.StatusNotFound, "Product not found", nil)
 		return
@@ -67,7 +67,7 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product, err := service.Delete(id)
+	product, err := service.DeleteProduct(id)
 	if err != nil {
 		Error(w, http.StatusNotFound, "Product not found", nil)
 		return
