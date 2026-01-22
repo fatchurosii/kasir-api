@@ -35,5 +35,33 @@ func RegisterRoutes() {
 		}
 	})
 
-	// End Product
+	//end product
+
+	// Category
+
+	http.HandleFunc("/api/category", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			handler.GetAllCategory(w, r)
+		case http.MethodPost:
+			handler.StoreCategory(w, r)
+		default:
+			handler.Error(w, http.StatusMethodNotAllowed, "Method not allowed", nil)
+		}
+	})
+
+	http.HandleFunc("/api/category/", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			handler.GetCategoryById(w, r)
+		case http.MethodPut:
+			handler.UpdateCategory(w, r)
+		case http.MethodDelete:
+			handler.DeleteCategory(w, r)
+		default:
+			handler.Error(w, http.StatusMethodNotAllowed, "Method not allowed", nil)
+		}
+	})
+
+	// End Category
 }
