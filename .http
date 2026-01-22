@@ -1,0 +1,21 @@
+//Health API
+GET http://localhost:8080/health
+###
+
+// List API
+GET http://localhost:8080/api/products
+###
+
+// store product
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "Coba Produk",
+  "price": 1000,
+  "stock" : 100
+}
+###
+
+//Detail Product
+GET http://localhost:8080/api/product/1
