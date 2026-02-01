@@ -1,22 +1,28 @@
 package router
 
 import (
+	"database/sql"
 	"kasir-api/handler"
+	"kasir-api/repository"
+	"kasir-api/service"
 	"net/http"
 )
 
-func RegisterRoutes() {
+func RegisterRoutes(db *sql.DB) {
 
 	http.HandleFunc("/health", handler.HealthHandler)
 
-	//Product
+	// Product
+	productRepository := repository.NewProductRepository(db)
+	productService := service.NewProductService(productRepository)
+	productHandler := handler.NewProductHandler(productService)
 
 	http.HandleFunc("/api/products", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			handler.GetAllProducts(w, r)
+			productHandler.GetAllProducts(w, r)
 		case http.MethodPost:
-			handler.StoreProduct(w, r)
+			productHandler.StoreProduct(w, r)
 		default:
 			handler.Error(w, http.StatusMethodNotAllowed, "Method not allowed", nil)
 		}
@@ -25,43 +31,15 @@ func RegisterRoutes() {
 	http.HandleFunc("/api/product/", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			handler.GetProductById(w, r)
+			productHandler.GetProductById(w, r)
 		case http.MethodPut:
-			handler.UpdateProduct(w, r)
+			productHandler.UpdateProduct(w, r)
 		case http.MethodDelete:
-			handler.DeleteProduct(w, r)
+			productHandler.DeleteProduct(w, r)
 		default:
 			handler.Error(w, http.StatusMethodNotAllowed, "Method not allowed", nil)
 		}
 	})
 
-	//end product
-
-	// Category
-
-	http.HandleFunc("/api/category", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			handler.GetAllCategory(w, r)
-		case http.MethodPost:
-			handler.StoreCategory(w, r)
-		default:
-			handler.Error(w, http.StatusMethodNotAllowed, "Method not allowed", nil)
-		}
-	})
-
-	http.HandleFunc("/api/category/", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			handler.GetCategoryById(w, r)
-		case http.MethodPut:
-			handler.UpdateCategory(w, r)
-		case http.MethodDelete:
-			handler.DeleteCategory(w, r)
-		default:
-			handler.Error(w, http.StatusMethodNotAllowed, "Method not allowed", nil)
-		}
-	})
-
-	// End Category
+	// Category (sama polanya, jangan pakai handler global)
 }

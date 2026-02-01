@@ -1,13 +1,13 @@
 //Health API
-GET http://localhost:8080/health
+GET http://localhost:8001/health
 ###
 
 // List API
-GET http://localhost:8080/api/products
+GET http://localhost:8001/api/products
 ###
 
 // store product
-POST http://localhost:8080/api/products
+POST http://localhost:8001/api/products
 Content-Type: application/json
 
 {
@@ -18,12 +18,12 @@ Content-Type: application/json
 ###
 
 //Detail Product
-GET http://localhost:8080/api/product/1
+GET http://localhost:8001/api/product/1
 
 ###
 
 // Update Product
-PUT http://localhost:8080/api/product/1
+PUT http://localhost:8001/api/product/1
 Content-Type: application/json
 
 {
@@ -36,15 +36,15 @@ Content-Type: application/json
 
 // Delete Product
 
-DELETE localhost:8080/api/product/1
+DELETE localhost:8001/api/product/1
 ###
 
 // List API
-GET http://localhost:8080/api/category
+GET http://localhost:8001/api/category
 ###
 
 // store category
-POST http://localhost:8080/api/category
+POST http://localhost:8001/api/category
 Content-Type: application/json
 
 {
@@ -54,12 +54,12 @@ Content-Type: application/json
 ###
 
 //Detail Category
-GET http://localhost:8080/api/category/1
+GET http://localhost:8001/api/category/1
 
 ###
 
 // Update Category
-PUT http://localhost:8080/api/category/1
+PUT http://localhost:8001/api/category/1
 Content-Type: application/json
 
 {
@@ -71,4 +71,4 @@ Content-Type: application/json
 
 // Delete Category
 
-DELETE localhost:8080/api/category/1
+DELETE localhost:8001/api/category/1

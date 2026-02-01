@@ -1,33 +1,51 @@
 package main
 
 import (
+	"fmt"
+	"kasir-api/database"
 	"kasir-api/router"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
+
+type Config struct {
+	Port   string `mapstructure:"APP_PORT"`
+	DBConn string `mapstructure:"DB_CONN"`
+}
 
 func main() {
 
-	err := godotenv.Load()
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
+	if _, err := os.Stat(".env"); err == nil {
+		viper.SetConfigFile(".env")
+		_ = viper.ReadInConfig()
+	}
+
+	config := Config{
+		Port:   viper.GetString("APP_PORT"),
+		DBConn: viper.GetString("DB_CONN"),
+	}
+
+	db, err := database.InitDB(config.DBConn)
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Failed to initialize database:", err)
 	}
+	defer db.Close()
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	router.RegisterRoutes(db)
 
-	router.RegisterRoutes()
+	addr := "0.0.0.0:" + config.Port
 
-	log.Println("Running server on http://localhost:" + port)
+	fmt.Println("Listening on " + addr)
 
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal(err)
+	if err := http.ListenAndServe(addr, nil); err != nil {
+		fmt.Println("Gagal memuat server:", err)
 	}
 
 }

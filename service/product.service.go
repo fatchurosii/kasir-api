@@ -1,52 +1,36 @@
 package service
 
 import (
-	"errors"
-	"kasir-api/data"
 	"kasir-api/entity"
+	"kasir-api/repository"
 )
 
-var ProductNotFound = errors.New("product not found")
+type ProductService struct {
+	ProductRepo *repository.ProductRepository
+}
 
-func GetProductByID(id int) (entity.Product, error) {
-	for _, product := range data.Products {
-		if product.ID == id {
-			return product, nil
-		}
+func NewProductService(repo *repository.ProductRepository) *ProductService {
+	return &ProductService{
+		ProductRepo: repo,
 	}
-	return entity.Product{}, ProductNotFound
 }
 
-func GetAllProduct() []entity.Product {
-	return data.Products
+func (s *ProductService) GetProductByID(id int) (*entity.Product, error) {
+	return s.ProductRepo.GetProductByID(id)
 }
 
-func CreateProduct(product entity.Product) entity.Product {
-	product.ID = len(data.Products) + 1
-	data.Products = append(data.Products, product)
-	return product
+func (s *ProductService) GetAllProductsService() ([]entity.Product, error) {
+	return s.ProductRepo.GetAllProducts()
 }
 
-func UpdateProduct(id int, product entity.Product) (entity.Product, error) {
-	for i, p := range data.Products {
-		if p.ID == id {
-			product.ID = id
-			data.Products[i] = product
-			return product, nil
-		}
-	}
-	return entity.Product{}, ProductNotFound
+func (s *ProductService) CreateProduct(product *entity.Product) error {
+	return s.ProductRepo.CreateProduct(product)
 }
 
-func DeleteProduct(id int) (entity.Product, error) {
-	for i, product := range data.Products {
-		if product.ID == id {
-			data.Products = append(
-				data.Products[:i],
-				data.Products[i+1:]...,
-			)
-			return product, nil
-		}
-	}
-	return entity.Product{}, ProductNotFound
+func (s *ProductService) UpdateProduct(product *entity.Product) error {
+	return s.ProductRepo.UpdateProduct(product)
+}
+
+func (s *ProductService) DeleteProduct(id int) error {
+	return s.ProductRepo.DeleteProduct(id)
 }
