@@ -41,5 +41,32 @@ func RegisterRoutes(db *sql.DB) {
 		}
 	})
 
-	// Category (sama polanya, jangan pakai handler global)
+	categoryRepository := repository.NewCategoryRepository(db)
+	categoryService := service.NewCategoryService(categoryRepository)
+	categoryHandler := handler.NewCategoryHandler(categoryService)
+
+	http.HandleFunc("/api/categories", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			categoryHandler.GetAllCategories(w, r)
+		case http.MethodPost:
+			categoryHandler.StoreCategory(w, r)
+		default:
+			handler.Error(w, http.StatusMethodNotAllowed, "Method not allowed", nil)
+		}
+	})
+
+	http.HandleFunc("/api/category/", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			categoryHandler.GetCategoryById(w, r)
+		case http.MethodPut:
+			categoryHandler.UpdateCategory(w, r)
+		case http.MethodDelete:
+			categoryHandler.DeleteCategory(w, r)
+		default:
+			handler.Error(w, http.StatusMethodNotAllowed, "Method not allowed", nil)
+		}
+	})
+
 }

@@ -7,41 +7,55 @@ import (
 	"net/http"
 )
 
-func GetCategoryById(w http.ResponseWriter, r *http.Request) {
+type CategoryHandler struct {
+	service *service.CategoryService
+}
+
+func NewCategoryHandler(service *service.CategoryService) *CategoryHandler {
+	return &CategoryHandler{service: service}
+}
+
+func (h *CategoryHandler) GetCategoryById(w http.ResponseWriter, r *http.Request) {
 	id, err := helper.ParseID(r, "/api/category/")
 	if err != nil {
 		Error(w, http.StatusBadRequest, "Invalid category ID", err.Error())
 		return
 	}
 
-	product, err := service.GetCategoryByID(id)
+	category, err := h.service.GetCategoryByID(id)
 	if err != nil {
 		Error(w, http.StatusNotFound, "Category not found", nil)
 		return
 	}
 
-	Success(w, http.StatusOK, "Category found", product)
+	Success(w, http.StatusOK, "Category found", category)
 }
 
-func GetAllCategory(w http.ResponseWriter, r *http.Request) {
-	Success(w, http.StatusOK, "All categories", service.GetAllCategory())
+func (h *CategoryHandler) GetAllCategories(w http.ResponseWriter, r *http.Request) {
+	categories, err := h.service.GetAllCategory()
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+
+	Success(w, http.StatusOK, "All categories", categories)
 }
 
-func StoreCategory(w http.ResponseWriter, r *http.Request) {
+func (h *CategoryHandler) StoreCategory(w http.ResponseWriter, r *http.Request) {
 	var category entity.Category
 	if err := helper.DecodeJSON(r, &category); err != nil {
 		Error(w, http.StatusBadRequest, "Invalid request body", err.Error())
 		return
 	}
 
-	result := service.CreateCategory(category)
+	result := h.service.CreateCategory(&category)
 	Success(w, http.StatusCreated, "Category created", result)
 }
 
-func UpdateCategory(w http.ResponseWriter, r *http.Request) {
+func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	id, err := helper.ParseID(r, "/api/category/")
 	if err != nil {
-		Error(w, http.StatusBadRequest, "Invalid product ID", err.Error())
+		Error(w, http.StatusBadRequest, "Invalid category ID", err.Error())
 		return
 	}
 
@@ -50,28 +64,28 @@ func UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusBadRequest, "Invalid request body", err.Error())
 		return
 	}
-
-	result, err := service.UpdateCategory(id, category)
+	category.ID = id
+	err = h.service.UpdateCategory(&category)
 	if err != nil {
-		Error(w, http.StatusNotFound, "Product not found", nil)
+		Error(w, http.StatusNotFound, "Category not found", nil)
 		return
 	}
 
-	Success(w, http.StatusOK, "Product updated", result)
+	Success(w, http.StatusOK, "Category updated", category)
 }
 
-func DeleteCategory(w http.ResponseWriter, r *http.Request) {
+func (h *CategoryHandler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	id, err := helper.ParseID(r, "/api/category/")
 	if err != nil {
 		Error(w, http.StatusBadRequest, "Invalid category ID", err.Error())
 		return
 	}
 
-	product, err := service.DeleteCategory(id)
+	err = h.service.CategoryRepo.DeleteCategory(id)
 	if err != nil {
 		Error(w, http.StatusNotFound, "Category not found", nil)
 		return
 	}
 
-	Success(w, http.StatusOK, "Category deleted", product)
+	Success(w, http.StatusOK, "Category deleted", nil)
 }

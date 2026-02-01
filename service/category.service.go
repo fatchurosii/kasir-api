@@ -2,52 +2,38 @@ package service
 
 import (
 	"errors"
-	"kasir-api/data"
 	"kasir-api/entity"
+	"kasir-api/repository"
 )
+
+type CategoryService struct {
+	CategoryRepo *repository.CategoryRepository
+}
+
+func NewCategoryService(categoryRepo *repository.CategoryRepository) *CategoryService {
+	return &CategoryService{
+		CategoryRepo: categoryRepo,
+	}
+}
 
 var ErrCategoryNotFound = errors.New("Category not found")
 
-func GetCategoryByID(id int) (entity.Category, error) {
-	for _, category := range data.Categories {
-		if category.ID == id {
-			return category, nil
-		}
-	}
-
-	return entity.Category{}, ErrCategoryNotFound
+func (s *CategoryService) GetCategoryByID(id int) (*entity.Category, error) {
+	return s.CategoryRepo.GetCategoryByID(id)
 }
 
-func GetAllCategory() []entity.Category {
-	return data.Categories
+func (s *CategoryService) GetAllCategory() ([]entity.Category, error) {
+	return s.CategoryRepo.GetAllCategories()
 }
 
-func CreateCategory(category entity.Category) entity.Category {
-	category.ID = len(data.Categories) + 1
-	data.Categories = append(data.Categories, category)
-	return category
+func (s *CategoryService) CreateCategory(category *entity.Category) error {
+	return s.CategoryRepo.CreateCategory(category)
 }
 
-func UpdateCategory(id int, category entity.Category) (entity.Category, error) {
-	for i, p := range data.Categories {
-		if p.ID == id {
-			category.ID = id
-			data.Categories[i] = category
-			return category, nil
-		}
-	}
-	return entity.Category{}, ErrCategoryNotFound
+func (s *CategoryService) UpdateCategory(category *entity.Category) error {
+	return s.CategoryRepo.UpdateCategory(category)
 }
 
-func DeleteCategory(id int) (entity.Category, error) {
-	for i, category := range data.Categories {
-		if category.ID == id {
-			data.Categories = append(
-				data.Categories[:i],
-				data.Categories[i+1:]...,
-			)
-			return category, nil
-		}
-	}
-	return entity.Category{}, ErrCategoryNotFound
+func (s *CategoryService) DeleteCategory(id int) error {
+	return s.CategoryRepo.DeleteCategory(id)
 }
